@@ -1,0 +1,117 @@
+.sp-title{
+	color: #f00;
+	font-size: 30px;
+	-webkit-margin-before: 0.83em;
+	-webkit-margin-after: 0.83em;
+	-webkit-margin-start: 0px;
+	-webkit-margin-end: 0px;
+	font-weight: bold;
+	text-align: center;
+	display: block;
+}
+
+.sp-title p{
+font-size: 28px;
+}
+
+.sp-subtitle{
+	font-family: Arial, Helvetica, Sans-Serif;
+	font-size: 13px;
+  	text-align: center;
+  	color: #0F1419;
+}
+
+.sp-redbox{
+	padding: 10px;
+	border: 2px dashed #F00;
+	margin: 30px 0px 30px 0px;
+	font-weight: bold;
+	background-color: #fffff2;
+}
+
+.sp-redbox ul{
+    list-style-type: none;
+    padding: 0px;
+    margin: 0px;
+}
+.sp-redbox ul li{
+    font-weight: bold;
+    background-image: url(../images/chk02.png);
+    background-repeat: no-repeat;
+    background-position: 0 center; 
+  padding-left: 50px;
+  padding-top: 16px;
+  height: 29px;
+}
+
+.sp-title2{
+	background: url(../images/title.png) left top no-repeat;
+	padding: 10px 15px;
+	  margin: 20px -30px 0 -30px;
+	height: 60px;
+	text-align: center;
+	color: #fff;
+	font-size: 26px;
+	background-size: 100% 100%;
+	clear: both;
+}
+
+.sp-box-double{
+	background-color: #feffc7;
+	padding: 10px;
+	border: 4px double #d20000;
+	margin: 10px 0px 20px 0px;
+	font-weight: bold;
+}
+
+.sp-brownbox{
+	background-color: #feffc7;
+	padding: 10px;
+	border: 2px dashed #7a0000;
+	margin: 10px 0px 20px 0px;
+	font-weight: bold;
+	line-height: 30px;
+}
+
+.sp-solidbox{
+	background-color: #feffc7;
+	padding: 10px;
+	border: 2px solid #009;
+	margin: 10px 0px 20px 0px;
+	line-height: 30px;
+}
+
+.sp-solidbox ul{
+    list-style-type: none;
+    padding: 0px;
+    margin: 0px;
+}
+.sp-solidbox ul li{
+    background-image: url(../images/check-mark-2-512.png);
+    background-repeat: no-repeat;
+    background-position: 0 center;
+    padding-left: 50px;
+    background-size: 40px auto;
+    margin: 6px 0;
+}
+
+
+.sp-accountbox{
+	padding: 10px 20px 3px;
+	background: #f0f0f0;
+	border: 1px solid #dedede;
+	border-radius: 5px;
+	margin: 20px 0 20px 0;
+}
+
+.sp-reddashbox{
+	padding: 20px;
+    border: 3px dashed #f00;
+    width: 274px;
+    margin: 0 auto;
+    box-sizing: border-box;
+    -moz-border-radius: 10px;
+  -webkit-border-radius: 10px;
+  -khtml-border-radius: 10px;
+  border-radius: 10px;
+}
