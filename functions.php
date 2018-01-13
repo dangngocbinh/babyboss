@@ -2,7 +2,9 @@
 	
 	include 'inc/theme-customizer.php';
 	include 'inc/theme-options-config.php';
-	include_once get_theme_file_path( 'inc/class-kirki-installer-section.php' );
+	require_once get_theme_file_path( 'inc/class-kirki-installer-section.php' );
+	require_once get_theme_file_path( '/inc/class-tgm-plugin-activation.php') ;
+	add_action( 'tgmpa_register', 'bb_register_required_plugins' );
 
 	function mytheme_customize_register( $wp_customize ) {
 	   
@@ -24,81 +26,21 @@
 
 	add_filter('siteorigin_unwind_footer_credits', 'uwbb_siteorigin_unwind_footer_credits');
 	function uwbb_siteorigin_unwind_footer_credits($text){
-		if(!UWBB_Customize::get_option("footer_credit_visibility")) return ""; 
+		$copyright = "";
+		if(UWBB_Customize::get_option("footer_credit_visibility")) {
+			$copyright = sprintf(" - Power by: <a href='%s'>Site Origin</a>/<a href='%s'>TKWeb Siêu Tốc</a>", "https://siteorigin.com/", "http://thietkewebsieutoc.net");	
+		}
 		
-		$text = sprintf(" - Power by: <a href='%s'>Site Origin</a>/<a href='%s'>TKWeb Siêu Tốc</a>", "https://siteorigin.com/", "http://thietkewebsieutoc.net");
-		return $text;
+		ob_start();
+		echo $copyright;
+		
+		wp_nav_menu( array( 'theme_location' => 'footer-menu', 'menu_id' => 'footer-menu','container_class' => 'footer-menu-container' ) );
+		
+		return ob_get_clean();
 
 	}
-	function wpb_mce_buttons_2($buttons) {
-		array_unshift($buttons, 'styleselect');
-		return $buttons;
-	}
-	add_filter('mce_buttons_2', 'wpb_mce_buttons_2');
-
-	function my_mce_before_init_insert_formats( $init_array ) {  
-
-// Define the style_formats array
-
-	$style_formats = array(  
-		array(  
-			'title' => 'Khung Viền Đỏ',  
-			'block' => 'div',  
-			'classes' => 'sp-redbox',
-			'wrapper' => true
-		),
-		array(  
-			'title' => 'Khung 2 Viền',  
-			'block' => 'div',  
-			'classes' => 'sp-box-double',
-			'wrapper' => true,
-		),
-		array(  
-			'title' => 'Khung Nền Xám',  
-			'block' => 'div',  
-			'classes' => 'sp-brownbox',
-			'wrapper' => true,
-		),
-		array(  
-			'title' => 'Solid Box',  
-			'block' => 'div',  
-			'classes' => 'sp-solidbox',
-			'wrapper' => true,
-		),
-		array(  
-			'title' => 'Account box',  
-			'block' => 'div',  
-			'classes' => 'sp-accountbox',
-			'wrapper' => true,
-		),
-		array(  
-			'title' => 'Red dash box',  
-			'block' => 'div',  
-			'classes' => 'sp-reddashbox',
-			'wrapper' => true,
-		),
-	);  
-	// Insert the array, JSON ENCODED, into 'style_formats'
-	$init_array['style_formats'] = json_encode( $style_formats );  
 	
-	return $init_array;  
-  
-} 
 
-// Attach callback to 'tiny_mce_before_init' 
-add_filter( 'tiny_mce_before_init', 'my_mce_before_init_insert_formats' );  
-
-function my_theme_add_editor_styles() {
-    add_editor_style(  get_stylesheet_directory_uri(  ) . '/assets/css/sale-page-style.css');
-}
-add_action( 'admin_init', 'my_theme_add_editor_styles' );
-
-function theme_name_scripts() {
-	wp_enqueue_style( 'style-salepage', get_stylesheet_directory_uri(  ) . '/assets/css/sale-page-style.css' );
-	
-}
-
-add_action( 'wp_enqueue_scripts', 'theme_name_scripts' );
 
 add_action( 'wp_enqueue_scripts', 'unwind_baby_boss_enqueue_styles',999 );
 function unwind_baby_boss_enqueue_styles() {
@@ -116,21 +58,18 @@ add_action( 'after_setup_theme', 'uwbb_remove_featured_images_from_child_theme',
 function uwbb_remove_featured_images_from_child_theme() {
 
     remove_theme_support( 'custom-background');
+    remove_theme_support( 'siteorigin-premium-no-attribution');//custom-logo
+    remove_theme_support( 'custom-logo');
+}
+
+remove_action( 'after_setup_theme', 'siteorigin_unwind_premium_setup' );
+add_filter( 'siteorigin_about_page_show', 'bb_hide_about_page' );
+function bb_hide_about_page($show){
+	$show = false;
+	return $show;
 }
 
 add_filter('body_class', array( 'UWBB_Customize' , 'body_class' ));
-/*add_filter( 'siteorigin_unwind_settings_array', 'uwbb_modify_theme_setting', 10, 1);
-function uwbb_modify_theme_setting($settings){
-	$settings['masthead']['fields']['background2'] = array(
-		'type'	=> 'uwbb-background-image',
-		'label'	=> esc_html__( 'Header Padding 2', 'siteorigin-unwind' ),
-		'description' => esc_html__( 'Top and bottom header padding 2.', 'siteorigin-unwind' ),
-		'live'	=> true,
-	);
-	return $settings;
-}*/
-
-//remove_action( 'admin_menu', array( 'SiteOrigin_Settings_About_Page', 'add_theme_page' ), 5 );
 
 function uwbb_siteorigin_unwind_woocommerce_enqueue_styles( $styles ) {
 	$styles['unwind-woocommerce1'] = array(
@@ -142,5 +81,80 @@ function uwbb_siteorigin_unwind_woocommerce_enqueue_styles( $styles ) {
 
 	return $styles;
 }
-//add_filter( 'woocommerce_enqueue_styles', 'uwbb_siteorigin_unwind_woocommerce_enqueue_styles' );
- ?>
+
+function uw_bb_register_my_menu() {
+  register_nav_menu('footer-menu',__( 'Footer Menu' ));
+}
+add_action( 'init', 'uw_bb_register_my_menu' );
+
+function bb_register_required_plugins() {
+	/*
+	 * Array of plugin arrays. Required keys are name and slug.
+	 * If the source is NOT from the .org repo, then source is also required.
+	 */
+	$plugins = array(
+
+		// This is an example of how to include a plugin bundled with a theme.
+		array(
+			'name'               => 'Kirki Toolkit', // The plugin name.
+			'slug'               => 'kirki', // The plugin slug (typically the folder name).
+			'required'           => true, // If false, the plugin is only 'recommended' instead of required.			
+			'force_activation'   => true, // If true, plugin is activated upon theme activation and cannot be deactivated until theme switch.
+			'force_deactivation' => false, // If true, plugin is deactivated upon theme switch, useful for theme-specific plugins.
+		),
+
+		// This is an example of how to include a plugin from an arbitrary external source in your theme.
+		array(
+			'name'         => 'Page Builder by SiteOrigin', // The plugin name.
+			'slug'         => 'siteorigin-panels', // The plugin slug (typically the folder name).
+			'required'     => true, // If false, the plugin is only 'recommended' instead of required.
+			'external_url' => '', // If set, overrides default API URL and points to an external URL.
+		),
+
+		// This is an example of how to include a plugin from the WordPress Plugin Repository.
+		array(
+			'name'      => 'Smart Slider',
+			'slug'      => 'smart-slider-3',
+			'required'  => false,
+		),
+
+		array(
+			'name'      => 'SiteOrigin Widgets Bundle',
+			'slug'      => 'so-widgets-bundle',
+			'required'  => false,
+		),
+
+		array(
+			'name'      => 'Ultimate Addons for SiteOrigin',
+			'slug'      => 'addon-so-widgets-bundle',
+			'required'  => false,
+		),
+
+		array(
+			'name'      => 'Yoast SEO',
+			'slug'      => 'wordpress-seo',
+			'required'  => false,
+		),
+
+		
+
+
+	);
+
+	
+	$config = array(
+		'id'           => 'tgmpa',                 // Unique ID for hashing notices for multiple instances of TGMPA.
+		'default_path' => '',                      // Default absolute path to bundled plugins.
+		'menu'         => 'tgmpa-install-plugins', // Menu slug.
+		'parent_slug'  => 'themes.php',            // Parent menu slug.
+		'capability'   => 'edit_theme_options',    // Capability needed to view plugin install page, should be a capability associated with the parent menu used.
+		'has_notices'  => true,                    // Show admin notices or not.
+		'dismissable'  => true,                    // If false, a user cannot dismiss the nag message.
+		'dismiss_msg'  => '',                      // If 'dismissable' is false, this message will be output at top of nag.
+		'is_automatic' => true,                   // Automatically activate plugins after installation or not.
+		'message'      => '',                      // Message to output right before the plugins table.
+	);
+
+	tgmpa( $plugins, $config );
+}
+?>

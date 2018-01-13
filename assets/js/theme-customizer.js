@@ -4,9 +4,9 @@ wp.customize( 'topbar_visibility', function( value ) {
 	value.bind( function( newval ) {
 
 		if(newval){
-			jQuery('#masthead .top-bar').show();
+			jQuery('#masthead .top-bar').removeClass('hidetopbar');
 		}else{
-			jQuery('#masthead .top-bar').hide();
+			jQuery('#masthead .top-bar').addClass('hidetopbar');
 		}
 	} );
 } );
@@ -22,7 +22,6 @@ wp.customize( 'topbar_sologan', function( value ) {
 wp.customize( 'header_menu_style', function( value ) {
 	// When the value changes.
 	value.bind( function( newval ) {
-		debugger;
 		jQuery('body').removeClass('.bottom-line-item');
 		jQuery('body').removeClass('.change-color-item');
 		jQuery('body').removeClass('.change-bg-item');

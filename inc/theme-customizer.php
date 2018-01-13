@@ -19,6 +19,21 @@ class UWBB_Customize {
     * @since MyTheme 1.0
     */
    public static function register ( $wp_customize ) {      
+    $wp_customize->get_control('site_icon')->section = 'theme_settings_branding';
+    $wp_customize->get_control('blogname')->section = 'theme_settings_branding';
+    $wp_customize->get_control('blogdescription')->section = 'theme_settings_branding';
+    $wp_customize->remove_setting('theme_settings_branding_attribution');
+    $wp_customize->remove_setting('theme_settings_branding_accent');
+    $wp_customize->remove_setting('theme_settings_branding_accent_dark');
+    $wp_customize->get_control('theme_settings_branding_logo')->default = get_theme_file_path('/assets/images/default-logo.png');
+    //$wp_customize->
+
+    
+      /*foreach ($wp_customize->settings() as $key => $value) {
+        echo $key . ' <br>';
+      }
+
+      die();*/
    }
 
    /**
@@ -30,6 +45,7 @@ class UWBB_Customize {
     * @since MyTheme 1.0
     */
    public static function body_class($classes){
+      $classes[] = 'babyboss';
       $menu_style = self::get_option( 'header_menu_style');
       if($menu_style) $classes[] = $menu_style;
       return $classes;
@@ -153,7 +169,7 @@ class UWBB_Customize {
 }
 
 // Setup the Theme Customizer settings and controls...
-add_action( 'customize_register' , array( 'UWBB_Customize' , 'register' ) );
+add_action( 'customize_register' , array( 'UWBB_Customize' , 'register' ), 99999 );
 
 // Output custom CSS to live site
 add_action( 'wp_head' , array( 'UWBB_Customize' , 'header_output' ) );
