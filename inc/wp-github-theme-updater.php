@@ -29,8 +29,7 @@ class Inc2734_WP_GitHub_Theme_Updater {
 	 *
 	 * @var array
 	 */
-	protected $fields = [];
-
+	
 	/**
 	 * Cache of GitHub API data
 	 *
@@ -44,15 +43,15 @@ class Inc2734_WP_GitHub_Theme_Updater {
 	 * @param string $repository
 	 * @param array $fields Theme data fields
 	 */
-	public function __construct( $theme_name, $user_name, $repository, array $fields = [] ) {
+	public function __construct( $theme_name, $user_name, $repository, array $fields = array()) {
 		$this->theme_name = $theme_name;
 		$this->user_name  = $user_name;
 		$this->repository = $repository;
 		$this->fields     = $fields;
 
-		add_filter( 'pre_set_site_transient_update_themes', [ $this, '_pre_set_site_transient_update_themes' ] );
-		add_filter( 'upgrader_pre_install', [ $this, '_upgrader_pre_install' ], 10, 2 );
-		add_filter( 'upgrader_source_selection', [ $this, '_upgrader_source_selection' ], 10, 4 );
+		add_filter( 'pre_set_site_transient_update_themes', array($this, '_pre_set_site_transient_update_themes' ));
+		add_filter( 'upgrader_pre_install', array( $this, '_upgrader_pre_install' ), 10, 2 );
+		add_filter( 'upgrader_source_selection', array( $this, '_upgrader_source_selection' ), 10, 4 );
 	}
 
 	/**
@@ -86,12 +85,12 @@ class Inc2734_WP_GitHub_Theme_Updater {
 
 		$package = $this->_get_zip_url( $this->api_data );
 
-		$transient->response[ $this->theme_name ] = [
+		$transient->response[ $this->theme_name ] = array(
 			'theme'       => $this->theme_name,
 			'new_version' => $this->api_data->tag_name,
 			'url'         => ( ! empty( $this->fields['homepage'] ) ) ? $this->fields['homepage'] : '',
 			'package'     => $package,
-		];
+		);
 
 		return $transient;
 	}
@@ -136,7 +135,7 @@ class Inc2734_WP_GitHub_Theme_Updater {
 
 		$slash_count = substr_count( $this->theme_name, '/' );
 		if ( $slash_count ) {
-			add_action( 'switch_theme', [ $this, '_re_activate' ], 10, 3 );
+			add_action( 'switch_theme',array( $this, '_re_activate' ), 10, 3 );
 		}
 
 		$source_theme_dir = untrailingslashit( WP_CONTENT_DIR ) . '/upgrade';
@@ -160,7 +159,7 @@ class Inc2734_WP_GitHub_Theme_Updater {
 	 * @return void
 	 */
 	public function _re_activate( $new_name, $new_theme, $old_theme ) {
-		remove_action( 'switch_theme', [ $this, '_re_activate' ], 10 );
+		remove_action( 'switch_theme', array( $this, '_re_activate' ), 10 );
 		if ( ! $old_theme->errors() && $new_theme->errors() ) {
 			switch_theme( untrailingslashit( $old_theme->get_stylesheet() ) );
 		}
@@ -246,11 +245,11 @@ class Inc2734_WP_GitHub_Theme_Updater {
 			$this->repository
 		);
 
-		return wp_remote_get( $url, [
-			'headers' => [
+		return wp_remote_get( $url, array(
+			'headers' => array(
 				'Accept-Encoding' => '',
-			],
-		] );
+			),
+		));
 	}
 
 	/**
